@@ -16,6 +16,7 @@ const center = {
   lng: -122.4194,
 };
 
+
 const AddLocation = () => {
   const dispatch = useDispatch();
   const [name, setName] = useState('');
@@ -89,6 +90,20 @@ const AddLocation = () => {
     }
   };
 
+  const handlePlaceChange = () => {
+    const place = autoCompleteRef.current?.getPlace();
+    if (place?.geometry?.location) {
+      const lat = place.geometry.location.lat();
+      const lng = place.geometry.location.lng();
+      setMarker({ lat, lng });
+      setName(place.name || '');
+      if (mapRef.current) {
+        mapRef.current.panTo({ lat, lng });
+        mapRef.current.setZoom(7);
+      }
+    }
+  };
+
   const markerIcon = {
     path: google.maps.SymbolPath.CIRCLE,
     fillColor: color,
@@ -112,19 +127,7 @@ const AddLocation = () => {
       <Flex direction="column" mt={4}>
         <Autocomplete
           onLoad={(autocomplete) => (autoCompleteRef.current = autocomplete)}
-          onPlaceChanged={() => {
-            const place = autoCompleteRef.current?.getPlace();
-            if (place?.geometry?.location) {
-              const lat = place.geometry.location.lat();
-              const lng = place.geometry.location.lng();
-              setMarker({ lat, lng });
-              setName(place.name || '');
-              if (mapRef.current) {
-                mapRef.current.panTo({ lat, lng });
-                mapRef.current.setZoom(7);
-              }
-            }
-          }}
+          onPlaceChanged={handlePlaceChange}
         >
           <Input
             ref={inputRef}
