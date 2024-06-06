@@ -42,7 +42,7 @@ const AddLocation: React.FC = () => {
     // Use geocoder to get the address
     if (geocoderRef.current) {
       geocoderRef.current.geocode({ location }, (results, status) => {
-        if (status === 'OK' && results[0]) {
+        if (status === 'OK' && results && results[0]) {
           setName(results[0].formatted_address);
         } else {
           console.error('Geocoder failed due to: ' + status);
