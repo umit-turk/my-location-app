@@ -38,7 +38,6 @@ const locationsSlice = createSlice({
   },
 });
 
-// localStorage'e kaydetme fonksiyonu
 const saveLocationsToLocalStorage = (locations: Location[]) => {
   localStorage.setItem('locations', JSON.stringify(locations));
 };
