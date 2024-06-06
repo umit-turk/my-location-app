@@ -1,5 +1,6 @@
 // app/layout.tsx
-import { Providers } from './providers'
+import { Providers } from './providers/providers'
+import Header from './ui/Header/Header'
 
 export default function RootLayout({
   children,
@@ -9,7 +10,10 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Header />
+          {children}
+          </Providers>
       </body>
     </html>
   )
