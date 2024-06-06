@@ -1,13 +1,7 @@
 import { Input } from '@chakra-ui/react';
 import { Autocomplete } from '@react-google-maps/api';
 import { useRef } from 'react';
-
-interface LocationAutocompleteProps {
-    inputRef: React.RefObject<HTMLInputElement>;
-    name: string;
-    setName: React.Dispatch<React.SetStateAction<string>>;
-    onPlaceChange: (location: google.maps.LatLngLiteral, placeName: string) => void;
-}
+import { LocationAutocompleteProps } from '../types/locationAutoCompleteProps';
 
 const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({ inputRef, name, setName, onPlaceChange }) => {
     const autoCompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
