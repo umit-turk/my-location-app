@@ -1,12 +1,5 @@
+import { Location } from '@/app/types/location';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-interface Location {
-  id: string;
-  name: string;
-  lat: number;
-  lng: number;
-  color: string;
-}
 
 interface LocationsState {
   locations: Location[];

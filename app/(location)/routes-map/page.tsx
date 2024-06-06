@@ -1,17 +1,11 @@
 "use client";
 import { useSelector } from 'react-redux';
-import { Box, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { GoogleMap, useLoadScript, Marker, InfoWindow, Polyline } from '@react-google-maps/api';
 import { RootState } from '@/store';
 import { useState, useEffect, useMemo } from 'react';
-
-interface Location {
-    id: string;
-    name: string;
-    color: string;
-    lat: number;
-    lng: number;
-}
+import { Location } from '@/app/types/location';
+import LoadingSpinner from '@/app/components/LoadingSpinner';
 
 const mapContainerStyle = {
     width: '100%',
@@ -60,7 +54,7 @@ const RoutesMap = () => {
     }, [locations, userLocation]);
 
     if (loadError) return <div>Error loading maps</div>;
-    if (!isLoaded || !userLocation) return <div>Loading Maps...</div>;
+    if (!isLoaded || !userLocation) return <LoadingSpinner />
 
     const handleMarkerClick = (location: Location) => {
         setSelectedLocation(location);
