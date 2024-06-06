@@ -30,7 +30,7 @@ const ShowLocation = () => {
 
     return (
         <Box p={4}>
-            <Button mt={4} onClick={() => router.push('/route')}>Show Route</Button>
+            <Button mt={4} onClick={() => router.push('/routes-map')}>Show Route</Button>
             <List spacing={3}>
                 {locations.map((location: Location) => (
                     <ListItem key={location.id}>
