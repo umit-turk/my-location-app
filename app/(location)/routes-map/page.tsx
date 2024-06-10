@@ -7,13 +7,14 @@ import { useState, useEffect, useMemo } from 'react';
 import { Location } from '@/app/types/location';
 import LoadingSpinner from '@/app/components/LoadingSpinner';
 import { MARKER_COLOR, POLYLINE_COLOR, getMapContainerStyle } from '@/app/config/constants';
+import { GOOGLE_MAPS_API_KEY } from '@/app/config/config';
 
 
 
 const RoutesMap = () => {
     const { locations } = useSelector((state: RootState) => state.locationsReducer);
     const { isLoaded, loadError } = useLoadScript({
-        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
+        googleMapsApiKey: GOOGLE_MAPS_API_KEY as string,
         libraries: ['geometry']
     });
 

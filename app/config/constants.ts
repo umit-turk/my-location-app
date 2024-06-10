@@ -1,6 +1,7 @@
 export const DEFAULT_CENTER = { lat: 37.7749, lng: -122.4194 };
 export const DEFAULT_ZOOM = 6;
 export const MARKER_SCALE = 10;
+export const PRIMARY_COLOR = '#FF0000';
 export const MARKER_STROKE_COLOR = 'white';
 export const MARKER_STROKE_WEIGHT = 2;
 export const MARKER_COLOR = '#00F';
