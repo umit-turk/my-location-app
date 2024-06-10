@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import { useSelector } from 'react-redux';
 import { Box } from '@chakra-ui/react';
 import { GoogleMap, useLoadScript, Marker, InfoWindow, Polyline } from '@react-google-maps/api';
@@ -6,14 +6,12 @@ import { RootState } from '@/store';
 import { useState, useEffect, useMemo } from 'react';
 import { Location } from '@/app/types/location';
 import LoadingSpinner from '@/app/components/LoadingSpinner';
+import { MARKER_COLOR, POLYLINE_COLOR, getMapContainerStyle } from '@/app/config/constants';
 
-const mapContainerStyle = {
-    width: '100%',
-    height: '100vh',
-};
+
 
 const RoutesMap = () => {
-    const locations = useSelector((state: RootState) => state.locations.locations);
+    const { locations } = useSelector((state: RootState) => state.locationsReducer);
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
         libraries: ['geometry']
@@ -53,13 +51,14 @@ const RoutesMap = () => {
         return sorted;
     }, [locations, userLocation]);
 
-    if (loadError) return <div>Error loading maps</div>;
-    if (!isLoaded || !userLocation) return <LoadingSpinner />
+    if (loadError) return <>Error loading maps</>;
+    if (!isLoaded || !userLocation) return <LoadingSpinner />;
 
     const handleMarkerClick = (location: Location) => {
         setSelectedLocation(location);
     };
 
+    // Marker ikonu oluşturma fonksiyonu
     const markerIcon = (color: string) => ({
         path: google.maps.SymbolPath.CIRCLE,
         scale: 8,
@@ -71,13 +70,13 @@ const RoutesMap = () => {
     return (
         <Box p={4}>
             <GoogleMap
-                mapContainerStyle={mapContainerStyle}
+                mapContainerStyle={getMapContainerStyle('100%','100vh')}
                 zoom={10}
                 center={userLocation}
             >
                 <Marker
                     position={userLocation}
-                    icon={markerIcon("#00F")}
+                    icon={markerIcon(MARKER_COLOR)}
                 />
                 {sortedLocations.map((location, index) => (
                     <Marker
@@ -91,12 +90,12 @@ const RoutesMap = () => {
                                 position={{ lat: selectedLocation.lat, lng: selectedLocation.lng }}
                                 onCloseClick={() => setSelectedLocation(null)}
                             >
-                                <div>
+                                <Box>
                                     <h2>{selectedLocation.name}</h2>
-                                    <p>Latitude: {selectedLocation.lat}</p>
-                                    <p>Longitude: {selectedLocation.lng}</p>
-                                    <p>Distance: {distances[index].toFixed(2)} km</p>
-                                </div>
+                                    <div>Latitude: {selectedLocation.lat.toFixed(2)}</div>
+                                    <div>Longitude: {selectedLocation.lng.toFixed(2)}</div>
+                                    <div>Distance: {distances[index].toFixed(2)} km</div>
+                                </Box>
                             </InfoWindow>
                         )}
                     </Marker>
@@ -104,7 +103,7 @@ const RoutesMap = () => {
                 <Polyline
                     path={[userLocation, ...sortedLocations.map(loc => ({ lat: loc.lat, lng: loc.lng }))]}
                     options={{
-                        strokeColor: '#FF0000',
+                        strokeColor: POLYLINE_COLOR,
                         strokeOpacity: 0.8,
                         strokeWeight: 2,
                     }}

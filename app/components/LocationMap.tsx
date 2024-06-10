@@ -1,25 +1,26 @@
+"use client"
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { LocationMapProps } from '../types/locationMapProps';
 import { useEffect, useRef } from 'react';
+import { DEFAULT_CENTER, DEFAULT_ZOOM, MARKER_SCALE, MARKER_STROKE_COLOR, MARKER_STROKE_WEIGHT, getMapContainerStyle } from '../config/constants';
 
 const LocationMap: React.FC<LocationMapProps> = ({
   onMapClick,
   marker,
   color,
-  mapRef
+  mapRef 
 }) => {
+
+  const internalMapRef = useRef<google.maps.Map | null>(null);
+
   const markerIcon = {
     path: google.maps.SymbolPath.CIRCLE,
     fillColor: color,
     fillOpacity: 1,
-    scale: 10,
-    strokeColor: 'white',
-    strokeWeight: 2,
+    scale: MARKER_SCALE,
+    strokeColor: MARKER_STROKE_COLOR,
+    strokeWeight: MARKER_STROKE_WEIGHT,
   };
-
-  const defaultCenter = { lat: 37.7749, lng: -122.4194 };
-
-  const internalMapRef = useRef<google.maps.Map | null>(null);
 
   useEffect(() => {
     if (mapRef.current) {
@@ -35,9 +36,9 @@ const LocationMap: React.FC<LocationMapProps> = ({
 
   return (
     <GoogleMap
-      mapContainerStyle={{ width: '100%', height: '50vh' }}
-      zoom={6}
-      center={marker || defaultCenter}
+      mapContainerStyle={getMapContainerStyle('100%','50vh')}
+      zoom={DEFAULT_ZOOM}
+      center={marker || DEFAULT_CENTER}
       onClick={onMapClick}
       onLoad={handleMapLoad}
     >
