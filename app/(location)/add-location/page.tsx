@@ -6,19 +6,21 @@ import { useLoadScript } from '@react-google-maps/api';
 import { addLocation } from '@/store/locationsSlice';
 import LocationMap from '@/app/components/LocationMap';
 import LocationAutocomplete from '@/app/components/LocationAutoComplete';
+import { PRIMARY_COLOR } from '@/app/config/constants';
+import { GOOGLE_MAPS_API_KEY } from '@/app/config/config';
 
 const AddLocation: React.FC = () => {
   const dispatch = useDispatch();
   const [name, setName] = useState<string>('');
   const [marker, setMarker] = useState<google.maps.LatLngLiteral | null>(null);
-  const [color, setColor] = useState('#FF0000');
+  const [color, setColor] = useState(PRIMARY_COLOR);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const geocoderRef = useRef<google.maps.Geocoder | null>(null);
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY as string,
     libraries: ['places'],
   });
 
@@ -72,7 +74,7 @@ const AddLocation: React.FC = () => {
       );
       setName('');
       setMarker(null);
-      setColor('#FF0000');
+      setColor(PRIMARY_COLOR);
     }
   };
 
