@@ -2,6 +2,7 @@
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { LocationMapProps } from '../types/locationMapProps';
 import { DEFAULT_CENTER, DEFAULT_ZOOM, MARKER_SCALE, MARKER_STROKE_COLOR, MARKER_STROKE_WEIGHT, getMapContainerStyle } from '../config/constants';
+import { useEffect } from 'react';
 
 const LocationMap: React.FC<LocationMapProps> = ({
   onMapClick,
@@ -19,13 +20,19 @@ const LocationMap: React.FC<LocationMapProps> = ({
     strokeWeight: MARKER_STROKE_WEIGHT,
   };
 
+  const handleMapLoad = (map: google.maps.Map) => {
+    if (mapRef.current) {
+      mapRef.current = map;
+    }
+};
+
   return (
     <GoogleMap
       mapContainerStyle={getMapContainerStyle('100%','50vh')}
       zoom={DEFAULT_ZOOM}
       center={marker || DEFAULT_CENTER}
       onClick={onMapClick}
-      onLoad={(map) => mapRef.current = map}
+      onLoad={handleMapLoad}
     >
       {marker && <Marker position={marker} icon={markerIcon} />}
     </GoogleMap>

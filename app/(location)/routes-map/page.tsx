@@ -39,7 +39,7 @@ const RoutesMap = () => {
         const computedDistances = locsCopy.map(location => {
             const userLatLng = new google.maps.LatLng(userLocation.lat, userLocation.lng);
             const locationLatLng = new google.maps.LatLng(location.lat, location.lng);
-            const distance = google.maps.geometry.spherical.computeDistanceBetween(userLatLng, locationLatLng) / 1000;
+            const distance = google.maps.geometry?.spherical?.computeDistanceBetween(userLatLng, locationLatLng) / 1000;
             return {
                 ...location,
                 distance
