@@ -9,12 +9,13 @@ import { useLoadScript } from '@react-google-maps/api';
 import LocationMap from '@/app/components/LocationMap';
 import LocationAutocomplete from '@/app/components/LocationAutoComplete';
 import LoadingSpinner from '@/app/components/LoadingSpinner';
+import { ROUTES } from '@/app/config/constants';
 
 const EditLocation = ({ params }: { params: { id: string } }) => {
     const router = useRouter();
     const dispatch = useDispatch();
     const location = useSelector((state: RootState) =>
-        state.locations.locations.find(loc => loc.id === params.id)
+        state.locationsReducer.locations.find(loc => loc.id === params.id)
     );
 
     const [name, setName] = useState(location?.name || '');
@@ -80,14 +81,14 @@ const EditLocation = ({ params }: { params: { id: string } }) => {
                 lng: marker.lng,
                 color,
             }));
-            router.push('/show-locations');
+            router.push(ROUTES.SHOW_LOCATIONS.route);
         }
     };
 
     if (!location || !isLoaded) {
         return <LoadingSpinner />
     }
-    if (loadError) return <div>Error loading maps</div>;
+    if (loadError) return <>Error loading maps</>;
 
     return (
         <Box p={4}>

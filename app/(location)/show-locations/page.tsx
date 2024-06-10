@@ -7,12 +7,13 @@ import { useState } from 'react';
 import LocationItem from '@/app/components/LocationItem';
 import { deleteLocation } from '@/store/locationsSlice';
 import { Location } from '@/app/types/location';
+import { ROUTES, gridTemplateColumns } from '@/app/config/constants';
 
 
 
 const ShowLocation = () => {
     const [openLocationIds, setOpenLocationIds] = useState<string[]>([]);
-    const locations = useSelector((state: RootState) => state.locations.locations);
+    const {locations} = useSelector((state: RootState) => state.locationsReducer);
     const router = useRouter();
     const dispatch = useDispatch()
 
@@ -26,13 +27,8 @@ const ShowLocation = () => {
         });
     };
 
-    const gridTemplateColumns = {
-        base: '1fr',
-        lg: 'repeat(2, 1fr)',
-    };
-
     if(locations.length === 0){
-        router.push('/add-location')
+        router.push(ROUTES.ADD_LOCATION.route)
     }
 
     return (
@@ -43,9 +39,9 @@ const ShowLocation = () => {
                         key={location.id}
                         location={location}
                         open={openLocationIds.includes(location.id)}
-                        onToggle={() => toggleLocation(location)}
-                        onEdit={() => router.push(`/edit-location/${location.id}`)}
-                        onDelete={() => dispatch(deleteLocation(location.id))}
+                        toggle={() => toggleLocation(location)}
+                        edit={() => router.push(`/edit-location/${location.id}`)}
+                        remove={() => dispatch(deleteLocation(location.id))}
                     />
                 ))}
             </Grid>
