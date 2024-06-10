@@ -58,7 +58,6 @@ const RoutesMap = () => {
         setSelectedLocation(location);
     };
 
-    // Marker ikonu oluşturma fonksiyonu
     const markerIcon = (color: string) => ({
         path: google.maps.SymbolPath.CIRCLE,
         scale: 8,

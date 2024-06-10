@@ -2,16 +2,12 @@
 import { Box, Button } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { NavigationBoxProps } from '../types/navigationBox';
-import { useEffect, useState } from 'react';
+import useMounted from '../hooks/useMounted';
 
 const NavigationBox: React.FC<NavigationBoxProps> = ({ title, route }) => {
     const router = useRouter();
-    const [isMounted, setIsMounted] = useState(false);
-
-    useEffect(() => {
-        setIsMounted(true);
-    }, []);
-
+    const isMounted = useMounted();
+   
     if (!isMounted) {
         return null;
     }
