@@ -2,15 +2,15 @@
 import { Box, Button, Flex, Input } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useLoadScript } from '@react-google-maps/api';
 import { addLocation } from '@/store/locationsSlice';
 import LocationMap from '@/app/components/LocationMap';
 import LocationAutocomplete from '@/app/components/LocationAutoComplete';
 import { PRIMARY_COLOR } from '@/app/config/constants';
-import { GOOGLE_MAPS_API_KEY } from '@/app/config/config';
+import { useGoogleMaps } from '@/app/hooks/useGoogleMaps';
 
 const AddLocation: React.FC = () => {
   const dispatch = useDispatch();
+  const { isLoaded, loadError } = useGoogleMaps(['places']);
   const [name, setName] = useState<string>('');
   const [marker, setMarker] = useState<google.maps.LatLngLiteral | null>(null);
   const [color, setColor] = useState(PRIMARY_COLOR);
@@ -18,11 +18,6 @@ const AddLocation: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const geocoderRef = useRef<google.maps.Geocoder | null>(null);
-
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: GOOGLE_MAPS_API_KEY as string,
-    libraries: ['places'],
-  });
 
   useEffect(() => {
     if (loadError) {

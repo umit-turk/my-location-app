@@ -5,12 +5,11 @@ import { useEffect, useRef, useState } from 'react';
 import { Box, Button, Input, Flex } from '@chakra-ui/react';
 import { RootState } from '@/store';
 import { updateLocation } from '@/store/locationsSlice';
-import { useLoadScript } from '@react-google-maps/api';
 import LocationMap from '@/app/components/LocationMap';
 import LocationAutocomplete from '@/app/components/LocationAutoComplete';
 import LoadingSpinner from '@/app/components/LoadingSpinner';
 import { PRIMARY_COLOR, ROUTES } from '@/app/config/constants';
-import { GOOGLE_MAPS_API_KEY } from '@/app/config/config';
+import { useGoogleMaps } from '@/app/hooks/useGoogleMaps';
 
 interface EditLocationProps {
     params: { id: string };
@@ -19,6 +18,8 @@ interface EditLocationProps {
 const EditLocation: React.FC<EditLocationProps> = ({ params }) => {
     const router = useRouter();
     const dispatch = useDispatch();
+    const { isLoaded, loadError } = useGoogleMaps(['places']);
+
     const location = useSelector((state: RootState) =>
         state.locationsReducer.locations.find(loc => loc.id === params.id)
     );
@@ -34,11 +35,6 @@ const EditLocation: React.FC<EditLocationProps> = ({ params }) => {
     const autoCompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
     const mapRef = useRef<google.maps.Map | null>(null);
     const geocoderRef = useRef<google.maps.Geocoder | null>(null);
-
-    const { isLoaded, loadError } = useLoadScript({
-        googleMapsApiKey: GOOGLE_MAPS_API_KEY as string,
-        libraries: ['places']
-    });
 
     useEffect(() => {
         if (isLoaded && inputRef.current) {
