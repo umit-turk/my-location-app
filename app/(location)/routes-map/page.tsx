@@ -1,54 +1,43 @@
-"use client"
+"use client";
 import { useSelector } from 'react-redux';
 import { Box } from '@chakra-ui/react';
-import { GoogleMap, useLoadScript, Marker, InfoWindow, Polyline } from '@react-google-maps/api';
+import { GoogleMap, Marker, InfoWindow, Polyline } from '@react-google-maps/api';
 import { RootState } from '@/store';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Location } from '@/app/types/location';
 import LoadingSpinner from '@/app/components/LoadingSpinner';
 import { MARKER_COLOR, POLYLINE_COLOR, getMapContainerStyle } from '@/app/config/constants';
-import { GOOGLE_MAPS_API_KEY } from '@/app/config/config';
-
-
+import useUserLocation from '@/app/hooks/useUserLocation';
+import { computeDistance, markerIcon, nearestNeighbor } from '@/app/helpers/mapHelpers';
+import { useGoogleMaps } from '@/app/hooks/useGoogleMaps';
 
 const RoutesMap = () => {
     const { locations } = useSelector((state: RootState) => state.locationsReducer);
-    const { isLoaded, loadError } = useLoadScript({
-        googleMapsApiKey: GOOGLE_MAPS_API_KEY as string,
-        libraries: ['geometry']
-    });
+    const { isLoaded, loadError } = useGoogleMaps(['geometry']);
 
-    const [userLocation, setUserLocation] = useState<google.maps.LatLngLiteral | null>(null);
+    const userLocation = useUserLocation();
     const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
     const [distances, setDistances] = useState<number[]>([]);
-
-    useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(position => {
-                setUserLocation({
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                });
-            });
-        }
-    }, []);
 
     const sortedLocations = useMemo(() => {
         if (!userLocation) return locations;
 
         const locsCopy = [...locations];
-        const computedDistances = locsCopy.map(location => {
-            const userLatLng = new google.maps.LatLng(userLocation.lat, userLocation.lng);
-            const locationLatLng = new google.maps.LatLng(location.lat, location.lng);
-            const distance = google.maps.geometry?.spherical?.computeDistanceBetween(userLatLng, locationLatLng) / 1000;
-            return {
-                ...location,
-                distance
-            };
-        });
+        const userLatLng = new google.maps.LatLng(userLocation.lat, userLocation.lng);
+        const allLocations = [userLatLng, ...locsCopy.map(loc => new google.maps.LatLng(loc.lat, loc.lng))];
 
-        const sorted = computedDistances.sort((a, b) => a.distance - b.distance);
-        setDistances(sorted.map(loc => loc.distance));
+        const unvisited = Array.from({ length: allLocations.length - 1 }, (_, i) => i + 1);
+        const route = nearestNeighbor(0, unvisited, allLocations);
+
+        const sorted = route.slice(1).map(index => locsCopy[index - 1]);
+        setDistances(sorted.map((location, index) => {
+            const prevIndex = route[index];
+            return computeDistance(
+                allLocations[prevIndex],
+                allLocations[route[index + 1]]
+            ) / 1000;
+        }));
+
         return sorted;
     }, [locations, userLocation]);
 
@@ -59,18 +48,10 @@ const RoutesMap = () => {
         setSelectedLocation(location);
     };
 
-    const markerIcon = (color: string) => ({
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 8,
-        fillColor: color,
-        fillOpacity: 1,
-        strokeWeight: 1,
-    });
-
     return (
         <Box p={4}>
             <GoogleMap
-                mapContainerStyle={getMapContainerStyle('100%','100vh')}
+                mapContainerStyle={getMapContainerStyle('100%', '100vh')}
                 zoom={10}
                 center={userLocation}
             >
